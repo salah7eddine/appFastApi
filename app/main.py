@@ -29,7 +29,6 @@ def root():
     with get_conn() as conn:
         conn.execute("""SELECT * FROM posts""")
         posts = conn.fetchall()
-        print(posts)
     return {"data": posts}
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
