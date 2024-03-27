@@ -1,15 +1,18 @@
 from fastapi import FastAPI, Response, status, HTTPException
-from fastapi.params import Body
-from pydantic import BaseModel
 from random import randrange
 
 from app.model.Post import Post
+from app.db.connectDB import get_conn
 
 
 
 app = FastAPI()
 
+
 my_posts  = [{"title": 'title 1', "content": "content 1", "id": 1}, {"title": 'title 2', "content": "content 2", "id": 2}]
+
+
+
 
 # request Get method url : "/"
 @app.get("/")
@@ -19,6 +22,15 @@ def root():
 @app.get("/posts")
 def get_posts():
     return {"data": my_posts}
+
+
+@app.get("/v1/posts")
+def root():
+    with get_conn() as conn:
+        conn.execute("""SELECT * FROM posts""")
+        posts = conn.fetchall()
+        print(posts)
+    return {"data": posts}
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post: Post):
